@@ -1,0 +1,118 @@
+
+#ifndef GPIO_PD6_PHA0
+#define GPIO_PD6_PHA0 0x00031806
+#endif
+
+
+#ifndef GPIO_PD7_PHB0
+#define GPIO_PD7_PHB0 0x00031C06
+#endif
+
+void delay_ms(int time) {
+    int i, j;
+    for (i = 0; i < time; i++)
+        for (j = 0; j < 3180; j++) {}
+}
+
+void QEI0_Init(void) {
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_QEI0);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
+    while (!SysCtlPeripheralReady(SYSCTL_PERIPH_QEI0));
+    while (!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOD));
+
+    // Unlock PD7
+    HWREG(GPIO_PORTD_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY;
+    HWREG(GPIO_PORTD_BASE + GPIO_O_CR) |= 0x80;
+    HWREG(GPIO_PORTD_BASE + GPIO_O_LOCK) = 0;
+
+    GPIOPinConfigure(GPIO_PD6_PHA0);
+    GPIOPinConfigure(GPIO_PD7_PHB0);
+    GPIOPinTypeQEI(GPIO_PORTD_BASE, GPIO_PIN_6 | GPIO_PIN_7);
+    GPIOPadConfigSet(GPIO_PORTD_BASE, GPIO_PIN_6 | GPIO_PIN_7,
+                     GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
+
+    QEIDisable(QEI0_BASE);
+    QEIConfigure(QEI0_BASE,
+                 QEI_CONFIG_CAPTURE_A_B |
+                 QEI_CONFIG_NO_RESET |
+                 QEI_CONFIG_QUADRATURE |
+                 QEI_CONFIG_SWAP,
+                 0xFFFFFFFF);
+    QEIPositionSet(QEI0_BASE, 0);
+    QEIEnable(QEI0_BASE);
+}
+
+void Motor_Init(void) {
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+    while (!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOF));
+
+    // Unlock PF0 if using it, and unlock the rest of PF pins
+    HWREG(GPIO_PORTF_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY;
+    HWREG(GPIO_PORTF_BASE + GPIO_O_CR) |= 0x1F;
+    HWREG(GPIO_PORTF_BASE + GPIO_O_LOCK) = 0;
+
+    // Set PF2 and PF3 as output for IN1 and IN2
+    GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_2 | GPIO_PIN_3);
+}
+
+void Motor_Forward(void) {
+    GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2 | GPIO_PIN_3, GPIO_PIN_2);
+}
+
+void Motor_Backward(void) {
+    GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2 | GPIO_PIN_3, GPIO_PIN_3);
+}
+
+void Motor_Stop(void) {
+    GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2 | GPIO_PIN_3, 0);
+}
+
+void LCD_DisplayPosition(uint32_t position) {
+    char buffer[16];
+    int i = 0;
+
+    if (position == 0) {
+        buffer[i++] = '0';
+    } else {
+        uint32_t temp = position;
+        int digits[10], j;
+        while (temp > 0 && i < 10) {
+            digits[i++] = temp % 10;
+            temp /= 10;
+        }
+        for (j = i - 1; j >= 0; j--) {
+            buffer[i - j - 1] = digits[j] + '0';
+        }
+    }
+    buffer[i] = '\0';
+
+    LCD_SetCursor(1, 0);  // Second line
+    LCD_Print("Pos: ");
+    LCD_Print(buffer);
+}
+
+int main(void) {
+    SysCtlClockSet(SYSCTL_SYSDIV_4 | SYSCTL_USE_PLL |
+                   SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ);
+
+    QEI0_Init();     // Initialize QEI
+    Motor_Init();    // Setup PF2, PF3
+    LCD_Init();      // Initialize LCD over I2C
+		LCD_SetBacklight(1); 
+    LCD_Clear();
+    LCD_SetCursor(0, 0);
+    LCD_Print("Encoder Test");
+
+    while (1) {
+        uint32_t position = QEIPositionGet(QEI0_BASE);
+        LCD_DisplayPosition(position);
+        Motor_Forward();
+        delay_ms(2000);
+				Motor_Stop();
+        delay_ms(2000);
+        Motor_Backward();
+        delay_ms(2200);
+        Motor_Stop();
+        delay_ms(2000);
+    }
+}
