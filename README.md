@@ -83,6 +83,8 @@ power-window-control/
 ├── Drivers/             # Hardware abstraction layer
 ├── README.md            # This file
 └── Documentation/       # Schematics and diagrams
+
+
 🔌 Pin Configuration
 Function	Pin	Description
 Motor Up	PF2	Motor control signal
