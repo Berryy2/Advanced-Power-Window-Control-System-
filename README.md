@@ -76,30 +76,51 @@ Visual feedback for lock status
 text
 power-window-control/
 ├── Inc/                 # Header files
+
 │   ├── LCD_I2C.h        # LCD interface
+
 │   └── tm4c123gh6pm.h   # MCU definitions
+
 ├── Src/
 │   └── main.c           # Main application code
+
 ├── Drivers/             # Hardware abstraction layer
+
 ├── README.md            # This file
+
 └── Documentation/       # Schematics and diagrams
+
 
 
 🔌 Pin Configuration
 Function	Pin	Description
+
 Motor Up	PF2	Motor control signal
+
 Motor Down	PF3	Motor control signal
+
 Driver Up	PB4	Driver window up button
+
 Driver Down	PB5	Driver window down button
+
 Passenger Up	PA6	Passenger window up button
+
 Passenger Down	PA7	Passenger window down button
+
 Window Lock	PB6	Passenger disable switch
+
 Upper Limit	PB0	Window fully closed switch
+
 Lower Limit	PB1	Window fully open switch
+
 IR Sensor	PB7	Obstacle detection
+
 Buzzer	PA5	Audible alarm
+
 QEI A	PD6	Encoder phase A
+
 QEI B	PD7	Encoder phase B
+
 🚀 Getting Started
 Prerequisites
 Code Composer Studio or Keil uVision
