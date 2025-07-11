@@ -82,10 +82,10 @@ volatile uint32_t position_cm = 0;
  * Description: Clears the specified line on the LCD screen. */
 void LCD_ClearLine(uint8_t line) {
     // Move cursor to the beginning of the specified line
-		LCD_SetCursor(line, 0);
-		// Overwrite the entire line with spaces to clear it
+    LCD_SetCursor(line, 0);
+    // Overwrite the entire line with spaces to clear it
     LCD_Print("                ");
-		// Reset cursor to the start of the line again
+    // Reset cursor to the start of the line again
     LCD_SetCursor(line, 0);
 }
 
@@ -96,7 +96,7 @@ void LCD_ClearLine(uint8_t line) {
  * Description: Software-based delay loop approximating milliseconds. */
 void delay_ms(int time) {
     int i, j;
-	 // Nested loop approximates a 1ms delay based on CPU speed
+   // Nested loop approximates a 1ms delay based on CPU speed
     for (i = 0; i < time; i++)
         for (j = 0; j < 3180; j++) {}
 }
@@ -107,40 +107,40 @@ void delay_ms(int time) {
  * Return: void
  * Description: Initializes the Quadrature Encoder Interface (QEI0) for position feedback. */
 void QEI0_Init(void) {
-		// Enable peripherals for QEI and GPIO port D
+   // Enable peripherals for QEI and GPIO port D
     SysCtlPeripheralEnable(SYSCTL_PERIPH_QEI0);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
-		// Wait until both peripherals are ready
+    // Wait until both peripherals are ready
     while (!SysCtlPeripheralReady(SYSCTL_PERIPH_QEI0));
     while (!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOD));
-		// Unlock PD7 (a protected pin)
+    // Unlock PD7 (a protected pin)
     HWREG(GPIO_PORTD_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY;
     HWREG(GPIO_PORTD_BASE + GPIO_O_CR) |= 0x80;
     HWREG(GPIO_PORTD_BASE + GPIO_O_LOCK) = 0;
-		// Configure PD6 and PD7 for QEI signals
+// Configure PD6 and PD7 for QEI signals
 #ifdef GPIO_PD6_PHA0
     GPIOPinConfigure(GPIO_PD6_PHA0);
 #endif
 #ifdef GPIO_PD7_PHB0
     GPIOPinConfigure(GPIO_PD7_PHB0);
 #endif
-		// Set the pins for QEI input type
+    // Set the pins for QEI input type
     GPIOPinTypeQEI(GPIO_PORTD_BASE, GPIO_PIN_6 | GPIO_PIN_7);
-		// Enable weak pull-ups for PD6 and PD7
+   // Enable weak pull-ups for PD6 and PD7
     GPIOPadConfigSet(GPIO_PORTD_BASE, GPIO_PIN_6 | GPIO_PIN_7,
                      GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
-		// Disable QEI during setup
+    // Disable QEI during setup
     QEIDisable(QEI0_BASE);
-		// Configure QEI: count both signals, no reset on index, quadrature mode, swap phase A/B
+    // Configure QEI: count both signals, no reset on index, quadrature mode, swap phase A/B
     QEIConfigure(QEI0_BASE,
                  QEI_CONFIG_CAPTURE_A_B |
                  QEI_CONFIG_NO_RESET |
                  QEI_CONFIG_QUADRATURE |
                  QEI_CONFIG_SWAP,
                  0xFFFFFFFF); // Max position value
-		// Reset position counter						 
+   // Reset position counter						 
     QEIPositionSet(QEI0_BASE, 0);
-		// Enable QEI module
+    // Enable QEI module
     QEIEnable(QEI0_BASE);
 }
 
@@ -150,14 +150,14 @@ void QEI0_Init(void) {
  * Return: void
  * Description: Initializes the motor control pins (PF2 and PF3) as outputs. */
 void Motor_Init(void) {
-		// Enable clock for GPIO Port F
+    // Enable clock for GPIO Port F
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
     while (!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOF));
-		// Unlock GPIO pins if locked (PF0 is often locked)
+    // Unlock GPIO pins if locked (PF0 is often locked)
     GPIOUnlockPin(GPIO_PORTF_BASE, GPIO_PIN_0);
     HWREG(GPIO_PORTF_BASE + GPIO_O_CR) |= 0x1F;
     HWREG(GPIO_PORTF_BASE + GPIO_O_LOCK) = 0;
-		// Set PF2 and PF3 as outputs for motor control
+    // Set PF2 and PF3 as outputs for motor control
     GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_2 | GPIO_PIN_3);
 }
 
@@ -167,12 +167,12 @@ void Motor_Init(void) {
  * Return: void
  * Description: Initializes the buzzer pin as output and sets it off. */
 void Buzzer_Init(void) {
-		// Enable GPIO port A for buzzer
+    // Enable GPIO port A for buzzer
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
     while (!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOA));
     // Set buzzer pin (PA5) as output
     GPIOPinTypeGPIOOutput(GPIO_PORTA_BASE, BUZZER_PIN);
-		// Ensure buzzer is off initiall
+    // Ensure buzzer is off initiall
     GPIOPinWrite(GPIO_PORTA_BASE, BUZZER_PIN, 0);
 }
 
@@ -182,7 +182,7 @@ void Buzzer_Init(void) {
  * Return: void
  * Description: Activates the buzzer. */
 void Buzzer_On(void) {
-		// Set buzzer pin high (ON)
+   // Set buzzer pin high (ON)
     GPIOPinWrite(GPIO_PORTA_BASE, BUZZER_PIN, BUZZER_PIN);
 }
 
@@ -192,7 +192,7 @@ void Buzzer_On(void) {
  * Return: void
  * Description: Deactivates the buzzer. */
 void Buzzer_Off(void) {
-		// Set buzzer pin low (OFF)
+    // Set buzzer pin low (OFF)
     GPIOPinWrite(GPIO_PORTA_BASE, BUZZER_PIN, 0);
 }
 
@@ -202,7 +202,7 @@ void Buzzer_Off(void) {
  * Return: void
  * Description: Moves the motor in the upward direction if semaphore is available. */
 void Motor_Up(void) {
-		// Take motor semaphore to prevent race condition
+    // Take motor semaphore to prevent race condition
     if (xSemaphoreTake(xMotorSemaphore, portMAX_DELAY) == pdTRUE) {
 				// Clear LCD status line
         LCD_ClearLine(0);
@@ -220,14 +220,14 @@ void Motor_Up(void) {
  * Return: void
  * Description: Moves the motor in the downward direction if semaphore is available. */
 void Motor_Down(void) {
-		// Take motor semaphore to prevent race condition
+    // Take motor semaphore to prevent race condition
     if (xSemaphoreTake(xMotorSemaphore, portMAX_DELAY) == pdTRUE) {
-				// Clear LCD status line
+	// Clear LCD status line
         LCD_ClearLine(0);
         LCD_Print("Opening..   ");
-				// Write signal to move motor down (PF2 low, PF3 high)
+	// Write signal to move motor down (PF2 low, PF3 high)
         GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2 | GPIO_PIN_3, GPIO_PIN_3);
-				// Release semaphore
+	// Release semaphore
         xSemaphoreGive(xMotorSemaphore);
     }
 }
@@ -238,11 +238,11 @@ void Motor_Down(void) {
  * Return: void
  * Description: Stops the motor if semaphore is available. */
 void Motor_Stop(void) {
-		// Take motor semaphore to prevent race condition
+    // Take motor semaphore to prevent race condition
     if (xSemaphoreTake(xMotorSemaphore, portMAX_DELAY) == pdTRUE) {
-				// Stop motor (set both PF2 and PF3 low)
+	// Stop motor (set both PF2 and PF3 low)
         GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2 | GPIO_PIN_3, 0);
-				// Release semaphore
+        // Release semaphore
         xSemaphoreGive(xMotorSemaphore);
     }
 }
@@ -254,11 +254,11 @@ void Motor_Stop(void) {
  * Description: Displays the current position on the second line of the LCD. */
 void LCD_DisplayPosition(uint32_t cm) {
     char buffer[16];
-		// Format the position text
+    // Format the position text
     sprintf(buffer, "Pos: %lu cm   ", cm);
-		// Set cursor to line 1, column 0
+    // Set cursor to line 1, column 0
     LCD_SetCursor(1, 0);
-		// Print formatted position
+    // Print formatted position
     LCD_Print(buffer);
 }
 
@@ -268,20 +268,20 @@ void LCD_DisplayPosition(uint32_t cm) {
  * Return: void
  * Description: Initializes the input pins for driver and passenger buttons, limit switches, and sensors. */
 void Buttons_Init(void) {
-		// Enable clocks for GPIO ports B and A
+    // Enable clocks for GPIO ports B and A
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
     while (!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOB));
     while (!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOA));
-		// Set PB4, PB5, PB6, PB7 as inputs with pull-up (driver buttons, lock, IR sensor)
+    // Set PB4, PB5, PB6, PB7 as inputs with pull-up (driver buttons, lock, IR sensor)
     GPIOPinTypeGPIOInput(GPIO_PORTB_BASE, DRIVER_UP_PIN | DRIVER_DOWN_PIN | PASSENGER_LOCK_PIN | IR_SENSOR_PIN);
     GPIOPadConfigSet(GPIO_PORTB_BASE, DRIVER_UP_PIN | DRIVER_DOWN_PIN | PASSENGER_LOCK_PIN | IR_SENSOR_PIN,
                      GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
-		// Set PB0 and PB1 as inputs for upper/lower limit switches
+    // Set PB0 and PB1 as inputs for upper/lower limit switches
     GPIOPinTypeGPIOInput(GPIO_PORTB_BASE, UPPER_LIMIT_PIN | LOWER_LIMIT_PIN);
     GPIOPadConfigSet(GPIO_PORTB_BASE, UPPER_LIMIT_PIN | LOWER_LIMIT_PIN,
                      GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
-		// Set PA6 and PA7 as inputs for passenger buttons
+    // Set PA6 and PA7 as inputs for passenger buttons
     GPIOPinTypeGPIOInput(GPIO_PORTA_BASE, PASSENGER_UP_PIN | PASSENGER_DOWN_PIN);
     GPIOPadConfigSet(GPIO_PORTA_BASE, PASSENGER_UP_PIN | PASSENGER_DOWN_PIN,
                      GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
@@ -331,14 +331,14 @@ bool IsObstacleDetected(void) {
 bool IsAutoMode(uint32_t port, uint8_t pin) {
     if (IsButtonPressed(port, pin)) {
 				uint32_t start_time = xTaskGetTickCount();
-				// Stay in loop while button remains pressed
+	// Stay in loop while button remains pressed
         while (IsButtonPressed(port, pin)) {
-						// If held too long, it's manual mode
+	    // If held too long, it's manual mode
             if ((xTaskGetTickCount() - start_time) > pdMS_TO_TICKS(AUTO_MODE_THRESHOLD)) {
                 return false;
             }
         }
-				// Button was pressed and released quickly
+	// Button was pressed and released quickly
         return true;
     }
     return false;
@@ -355,7 +355,7 @@ void EmergencyTask(void *pvParameters) {
     const TickType_t xFrequency = pdMS_TO_TICKS(10);
     
     for (;;) {
-				// Check if emergency event was queued
+	// Check if emergency event was queued
         if (xQueueReceive(xEmergencyQueue, &emergencyEvent, 0) == pdPASS) {
             if (emergencyEvent == 1) { // Obstacle detected
                 emergencyStop = true;
@@ -374,7 +374,7 @@ void EmergencyTask(void *pvParameters) {
                     
                     static uint32_t lastUpdate = 0;
                     uint32_t now = xTaskGetTickCount();
-										// Update LCD every 100ms
+		    // Update LCD every 100ms
                     if (now - lastUpdate >= pdMS_TO_TICKS(100)) {
                         if (position_cm > MIN_POS_CM) {
                             position_cm--;
@@ -412,7 +412,7 @@ void DriverControlTask(void *pvParameters) {
             vTaskDelay(pdMS_TO_TICKS(100));
             continue;
         }
-				// Handle UP button
+	// Handle UP button
         if (IsButtonPressed(GPIO_PORTB_BASE, DRIVER_UP_PIN)) {
             bool auto_mode = IsAutoMode(GPIO_PORTB_BASE, DRIVER_UP_PIN);
             
@@ -455,7 +455,7 @@ void DriverControlTask(void *pvParameters) {
                 LCD_Print("Upper Limit   ");
             }
         }
-				// Handle DOWN button
+	// Handle DOWN button
         if (IsButtonPressed(GPIO_PORTB_BASE, DRIVER_DOWN_PIN)) {
             bool auto_mode = IsAutoMode(GPIO_PORTB_BASE, DRIVER_DOWN_PIN);
             
@@ -516,7 +516,7 @@ void PassengerControlTask(void *pvParameters) {
                 LCD_ClearLine(0);
             }
         } else {
-						// Passenger UP button
+	    // Passenger UP button
             if (IsButtonPressed(GPIO_PORTA_BASE, PASSENGER_UP_PIN)) {
                 bool auto_mode = IsAutoMode(GPIO_PORTA_BASE, PASSENGER_UP_PIN);
                 
@@ -559,7 +559,7 @@ void PassengerControlTask(void *pvParameters) {
                     LCD_Print("Upper Limit   ");
                 }
             }
-						// Passenger DOWN button
+	    // Passenger DOWN button
             if (IsButtonPressed(GPIO_PORTA_BASE, PASSENGER_DOWN_PIN)) {
                 bool auto_mode = IsAutoMode(GPIO_PORTA_BASE, PASSENGER_DOWN_PIN);
                 
