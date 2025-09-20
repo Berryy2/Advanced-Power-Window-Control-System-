@@ -1,4 +1,4 @@
-Advanced Power Window Control System
+Advanced Power Window Control Systems
 
 📖 Overview
 This project implements an advanced power window control system for automotive applications using FreeRTOS on the TM4C123GH6PM microcontroller. The system features:
