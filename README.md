@@ -1,10 +1,5 @@
 # 🚗 Advanced Power Window Control System  
 
-## 🏗️ System Architecture  
-
-<p align="center">
-  <img src="docs/system-architecture.png" alt="System Architecture" width="600"/>
-</p>
 
 ![License](https://img.shields.io/badge/License-MIT-blue.svg)  
 ![Platform](https://img.shields.io/badge/Platform-TM4C123GH6PM-green.svg)  
@@ -34,6 +29,7 @@ It provides:
 - **FreeRTOS Multi-tasking** ⚙️  
 
 ---
+## 🏗️ System Architecture  
 
 ## 🔧 Hardware Components  
 
@@ -66,47 +62,47 @@ It provides:
 ## 📂 Repository Structure  
 
 ├── src/
-
+|
 │ ├── main.c
-
+|
 │ ├── LCD_I2C.c
-
+|
 │ ├── gpio.c
-
+|
 │ ├── i2c.c
-
+|
 │ ├── qei.c
-
+|
 │ ├── uart.c
-
+|
 │ ├── sysctl.c
-
+|
 │ └── watchdog.c
 
 
 ├── include/
-
+|
 │ ├── LCD_I2C.h
-
+|
 │ ├── gpio.h
-
+|
 │ ├── i2c.h
-
+|
 │ ├── qei.h
-
+|
 │ ├── uart.h
-
+|
 │ ├── sysctl.h
-
+|
 │ ├── watchdog.h
-
+|
 │ ├── pin_map.h
-
+|
 │ └── fpu.h
 
 
 ├── docs/
-
+|
 │ ├── Advanced Power Window Control System.pdf
 │ └── system-architecture.png
 
