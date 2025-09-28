@@ -1,180 +1,183 @@
-Advanced Power Window Control System
+🚗 Advanced Power Window Control System
 
-📖 Overview
-This project implements an advanced power window control system for automotive applications using FreeRTOS on the TM4C123GH6PM microcontroller. The system features:
-
-Dual control interfaces (driver and passenger)
-
-Auto-up/auto-down functionality
-
-Obstacle detection with emergency reversal
-
-Window lock feature
-
-Position tracking via quadrature encoder
-
-LCD status display
-
-Safety limit switches
-
-🛠 Hardware Components
-Microcontroller: TM4C123GH6PM (ARM Cortex-M4)
-
-Motor Driver: L298N or similar H-bridge
-
-Sensors:
-
-Quadrature encoder for position feedback
-
-IR obstacle sensor
-
-Mechanical limit switches
-
-Inputs:
-
-Driver up/down buttons
-
-Passenger up/down buttons
-
-Window lock switch
-
-Outputs:
-
-DC window motor
-
-Buzzer for alerts
-
-I2C LCD display (16x2)
-
-📋 Features
-Control Modes
-Manual Mode: Press and hold buttons for continuous movement
-
-Auto Mode: Quick press for automatic full open/close
-
-Emergency Stop: Immediate stop and reversal on obstacle detection
-
-Safety Features
-Mechanical limit switches for end positions
-
-IR obstacle detection
-
-500ms emergency reverse on obstacle detection
-
-Audible buzzer alert for emergencies
-
-Passenger window lock
-
-User Interface
-Real-time position display (0-40cm range)
-
-Status messages (opening/closing/obstacle/etc.)
-
-Visual feedback for lock status
-
-📂 Project Structure
-text
-power-window-control/
-├── Inc/                 # Header files
-
-│   ├── LCD_I2C.h        # LCD interface
-
-│   └── tm4c123gh6pm.h   # MCU definitions
-
-├── Src/
-│   
-└── main.c           # Main application code
-
-├── Drivers/             # Hardware abstraction layer
-
-├── README.md            # This file
-
-└── Documentation/       # Schematics and diagrams
 
 
 
-🔌 Pin Configuration
-Function	Pin	Description
+📖 Overview
 
-Motor Up	PF2	Motor control signal
+This project implements an Advanced Power Window Control System using the Tiva C Series TM4C123GH6PM microcontroller and FreeRTOS for real-time task management.
 
-Motor Down	PF3	Motor control signal
+The system controls a front passenger door window, providing manual and automatic operation, safety features like obstacle detection and limit switches, driver lock functionality, and low-power mode.
 
-Driver Up	PB4	Driver window up button
+This design emphasizes safety, efficiency, and real-time reliability — key requirements in modern automotive embedded systems.
 
-Driver Down	PB5	Driver window down button
+✨ Key Features
 
-Passenger Up	PA6	Passenger window up button
+Manual & Automatic Window Operation
 
-Passenger Down	PA7	Passenger window down button
+Manual: Window moves while switch is pressed.
 
-Window Lock	PB6	Passenger disable switch
+One-touch Auto: Short press fully opens/closes the window.
 
-Upper Limit	PB0	Window fully closed switch
+Safety & Obstacle Detection
 
-Lower Limit	PB1	Window fully open switch
+IR sensor detects obstructions during auto-close.
 
-IR Sensor	PB7	Obstacle detection
+Emergency stop + reverse for 0.5s if an obstacle is detected.
 
-Buzzer	PA5	Audible alarm
+Limit switches prevent over-travel.
 
-QEI A	PD6	Encoder phase A
+Precise Position Control
 
-QEI B	PD7	Encoder phase B
+Incremental encoder tracks window position.
 
-🚀 Getting Started
+LCD displays window position in cm.
+
+Driver Lock Functionality
+
+Lock switch disables passenger control.
+
+Driver always retains full control.
+
+Audible & Visual Alerts
+
+Buzzer + LCD notifications for safety events.
+
+Power Management
+
+MCU enters low-power sleep mode (WFI) when idle.
+
+FreeRTOS Integration
+
+Independent tasks for driver control, passenger control, emergency handling.
+
+Synchronization via semaphores and message queues.
+
+🏗️ System Architecture
+ ┌────────────┐       ┌────────────┐
+ │   Driver   │──────▶│  Window    │
+ │  Controls  │       │   Motor    │
+ └────────────┘       └─────▲──────┘
+                            │
+ ┌────────────┐       ┌─────┴──────┐       ┌────────────┐
+ │ Passenger  │──────▶│   Motor    │──────▶│   LCD +    │
+ │  Controls  │       │   Driver   │       │   Buzzer   │
+ └────────────┘       └─────▲──────┘       └────────────┘
+                            │
+                 ┌──────────┴──────────┐
+                 │  Sensors & Feedback │
+                 │ (IR, Encoder, Limit)│
+                 └──────────┬──────────┘
+                            │
+                     ┌──────┴───────┐
+                     │  TM4C123 MCU │
+                     │  + FreeRTOS  │
+                     └──────────────┘
+
+🔧 Hardware Components
+Component	Description	Pins Used
+TM4C123GH6PM	Tiva C Series MCU	—
+DC Motor + H-Bridge	Drives the window	PF2, PF3
+IR Sensor	Obstacle detection	PB7
+Incremental Encoder	Position feedback	PD6, PD7 (QEI0)
+Limit Switches	Upper/lower bounds	PB0, PB1
+Driver Buttons	Manual/Auto up & down	PB4, PB5
+Passenger Buttons	Manual/Auto up & down	PA6, PA7
+Lock Switch	Disables passenger control	PB6
+Buzzer	Audible alert	PA5
+LCD (I²C)	Status display	I²C bus
+💻 Software & FreeRTOS Implementation
+
+Tasks
+
+DriverControlTask → handles driver buttons (manual/auto).
+
+PassengerControlTask → handles passenger buttons, obeying lock.
+
+EmergencyTask → reacts to IR obstacle detection using a queue.
+
+Synchronization
+
+Semaphore (xMotorSemaphore) → ensures safe motor access (prevents race conditions).
+
+Queue (xEmergencyQueue) → passes obstacle detection events to EmergencyTask.
+
+Idle Hook
+
+Implements WFI instruction → MCU enters low-power sleep mode until next interrupt.
+
+📂 Repository Structure
+Advanced-Power-Window-Control-System-/
+│── src/           
+│    ├── main.c
+│    ├── LCD_I2C.c
+│    ├── gpio.c
+│    ├── i2c.c
+│    ├── qei.c
+│    ├── uart.c
+│    ├── sysctl.c
+│    └── watchdog.c
+│
+│── include/       
+│    ├── LCD_I2C.h
+│    ├── gpio.h
+│    ├── i2c.h
+│    ├── qei.h
+│    ├── uart.h
+│    ├── sysctl.h
+│    ├── watchdog.h
+│    ├── pin_map.h
+│    └── fpu.h
+│
+│── docs/          
+│    └── Advanced Power Window Control System.pdf
+│
+│── README.md
+
+🚀 Setup & Usage
 Prerequisites
-Code Composer Studio or Keil uVision
 
-TM4C123G LaunchPad
+Keil µVision or Code Composer Studio
 
-Power window hardware setup
+TivaWare driverlib
 
-I2C LCD display (16x2)
+FreeRTOS
 
-Building and Flashing
-Clone the repository
+Build & Flash
 
-Import project into your IDE
+Clone repo:
 
-Build the project
+git clone https://github.com/<your-username>/Advanced-Power-Window-Control-System-.git
+cd Advanced-Power-Window-Control-System-
 
-Flash to TM4C123G microcontroller
 
-Connect hardware according to pin configuration
+Open project in IDE.
 
-� FreeRTOS Configuration
-Tasks:
+Build and flash to TM4C123GH6PM LaunchPad.
 
-EmergencyTask (Priority: 3)
+⚡ Challenges & Solutions
 
-DriverControlTask (Priority: 2)
+Race conditions → solved with semaphores around motor control.
 
-PassengerControlTask (Priority: 1)
+Task communication → implemented queues for emergency events.
 
-Synchronization:
+Energy efficiency → used FreeRTOS Idle Hook (WFI) for sleep mode.
 
-Mutex semaphore for motor control
+Debouncing & auto/manual detection → threshold-based timing logic.
 
-Queue for emergency events
+🔮 Future Improvements
 
-📊 Performance Metrics
-Position resolution: ±1cm
+Integrate CAN bus for multi-window control.
 
-Emergency response time: <50ms
+Add mobile app for remote monitoring.
 
-Auto mode speed: 15cm/second
+Implement fault logging via UART or SD card.
 
-Debounce time: 1000ms for auto mode detection
+Use PWM motor speed control for smoother operation.
 
-📝 License
-This project is licensed under the MIT License - see the LICENSE file for details.
+📜 License
 
-🤝 Contributing
-Contributions are welcome! Please open an issue or submit a pull request.
+This project is licensed under the MIT License.
 
-✉ Contact
-For questions or support, please contact:
-Mohamed ElBerry - Mohamed_berry210@hotmail.com
-
-For project's video: https://drive.google.com/drive/folders/1Bj1YK_2sROzb6ry-eCndWYE8JhRzYeK8?usp=sharing 
+✨ Developed by Mohamed Maged El Sayed Ahmed Elberry
+🎓 CSE411: Real-Time and Embedded Systems Design (Spring 2025)
