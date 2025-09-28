@@ -3,7 +3,7 @@
 ## 🏗️ System Architecture  
 
 <p align="center">
-  <img src="docs/system-architecture.png" alt="System Architecture" width="600"/>
+ ![System Architecture](docs/system-architecture.png)
 </p>
 
 ![License](https://img.shields.io/badge/License-MIT-blue.svg)  
