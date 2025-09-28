@@ -109,8 +109,6 @@ It provides:
 
 └── README.md
 
-yaml
-Copy code
 
 ---
 
