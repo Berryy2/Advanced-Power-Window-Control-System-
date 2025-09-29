@@ -1,3 +1,15 @@
+/******************************************************************************************
+ *
+ * Project: Advanced-Power-Window-Control-System.
+ *
+ * File Name: main.c
+ *
+ * Description: Application File for the Advanced-Power-Window-Control-System. project
+ *
+ * Author: Mohamed ElBerry
+ *
+ ****************************************************************************************/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
