@@ -7,6 +7,7 @@
 </p>
 
 This diagram illustrates the interaction between **Driver Controls, Passenger Controls, Motor Driver, Window Motor, LCD, Buzzer, and Sensors** (IR, Encoder, Limit Switches), all orchestrated by the **TM4C123GH6PM MCU running FreeRTOS**.
+
 ![License](https://img.shields.io/badge/License-MIT-blue.svg)  
 ![Platform](https://img.shields.io/badge/Platform-TM4C123GH6PM-green.svg)  
 ![RTOS](https://img.shields.io/badge/RTOS-FreeRTOS-orange.svg)  
