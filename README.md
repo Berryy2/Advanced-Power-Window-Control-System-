@@ -1,6 +1,12 @@
 # 🚗 Advanced Power Window Control System  
 
+## 🏗️ System Architecture  
 
+<p align="center">
+  <img src="docs/Screenshot 2025-09-29 172308.png" alt="System Architecture" width="700"/>
+</p>
+
+This diagram illustrates the interaction between **Driver Controls, Passenger Controls, Motor Driver, Window Motor, LCD, Buzzer, and Sensors** (IR, Encoder, Limit Switches), all orchestrated by the **TM4C123GH6PM MCU running FreeRTOS**.
 ![License](https://img.shields.io/badge/License-MIT-blue.svg)  
 ![Platform](https://img.shields.io/badge/Platform-TM4C123GH6PM-green.svg)  
 ![RTOS](https://img.shields.io/badge/RTOS-FreeRTOS-orange.svg)  
@@ -28,8 +34,7 @@ It provides:
 - **LCD Status + Buzzer Alerts** 📺🔔  
 - **FreeRTOS Multi-tasking** ⚙️  
 
----
-## 🏗️ System Architecture  
+---  
 
 ## 🔧 Hardware Components  
 
