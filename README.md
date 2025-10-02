@@ -38,7 +38,7 @@ It provides:
 ---  
 
 ## 🔧 Hardware Components  
-  <p align="center">
+
 | Component                | Description                           | Pins Used         |
 |---------------------------|---------------------------------------|------------------|
 | **DC Motor + H-Bridge**  | Drives the window                     | PF2, PF3         |
@@ -50,7 +50,7 @@ It provides:
 | **Lock Switch**          | Disables passenger control            | PB6              |
 | **Buzzer**               | Audible alert                         | PA5              |
 | **LCD (I²C)**            | Status display                        | I²C bus          |
-</p>
+
 ---
 
 ## 💻 Software & FreeRTOS Tasks  
