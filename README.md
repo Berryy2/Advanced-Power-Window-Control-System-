@@ -38,7 +38,7 @@ It provides:
 ---  
 
 ## 🔧 Hardware Components  
-
+  
 | Component                | Description                           | Pins Used         |
 |---------------------------|---------------------------------------|------------------|
 | **DC Motor + H-Bridge**  | Drives the window                     | PF2, PF3         |
